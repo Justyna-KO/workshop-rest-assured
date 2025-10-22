@@ -1,0 +1,38 @@
+name: API Tests for Test Application
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  api-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Deploy Application
+        run: echo "Fake Application Deployment"
+
+      - name: Install Maven Dependencies
+        run: mvn clean install -DskipTests
+
+      - name: Run Tests
+        run: mvn test -Dtest=JsonPlaceholderV3Test
+
+      - name: Generate Report
+        run: mvn surefire-report:report-only
+
+      - name: Upload Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-report
+          path: target/reports/surefire.html
